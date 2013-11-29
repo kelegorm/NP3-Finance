@@ -234,7 +234,7 @@ var getItemValues = function (element) {
 }
 
 var removeItemFromModel = function (date,item) {
-   model[date]._removeData(item);
+//   model[date]._removeData(item);
 }
 
 var deleteItem = function () {
@@ -244,7 +244,7 @@ var deleteItem = function () {
         var itemToRemove = $(this).closest('.pull-right').parent('div');
         itemToRemove.remove();
 
-        console.log (model);
+        console.log (Item);
     })
 }
 var model={};
