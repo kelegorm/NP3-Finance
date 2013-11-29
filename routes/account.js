@@ -44,7 +44,11 @@ module.exports = function (app) {
         Account.register(email, password, function(error) {
             if (error) {
                 console.log(error);
-                res.send(400, 'Unknown error');
+                var message = 'Unknown error';
+                if (error.code == 11000) {
+                    message = 'This email is registered';
+                }
+                res.send(400, message);
             } else {
                 console.log('User ' + email + ' was registered');
                 sendRegistrationMail(email, password, function (error, response) {
