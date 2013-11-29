@@ -15,7 +15,8 @@ module.exports.create = function (purchase, callback) {
 };
 
 module.exports.getPurchases = function (userId, callback) {
-    Purchase.find({email:userId}, function (error, notes) {
+    console.log('getPurchases(' + userId + ')');
+    Purchase.find({userId:userId}, function (error, notes) {
         if (error) {
             callback(error);
         } else {
@@ -34,6 +35,6 @@ module.exports.delete = function (purchaseId, callback) {
     Purchase.findByIdAndRemove(purchaseId, callback);
 };
 
-module.exports.getPurchases = function (purchaseId, callback) {
+module.exports.getPurchase = function (purchaseId, callback) {
     Purchase.findById(purchaseId, callback);
 };

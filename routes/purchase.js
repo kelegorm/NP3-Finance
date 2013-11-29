@@ -5,8 +5,10 @@ module.exports = function (app) {
     app.get('/purchases', function (req, res) {
         var userId = req.session.email;
 
+        console.log('GET /purchases: ');
         Purchase.getPurchases(userId, function (error, purchases) {
             if (error) {
+                console.log('GET /purchases: error: ' + error);
                 res.send(500, error);
             } else {
                 res.send(purchases);

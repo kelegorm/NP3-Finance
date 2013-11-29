@@ -35,8 +35,8 @@ var markToday = function (date) {
 //определяет есть ли данные за сегодняшнее число и в зависимости от этого дописывает Today или рисует форму ввода
 
 
-var slideInputForm = function (){
-    $('.btnAddTable').click(function (){
+var slideInputForm = function () {
+    $('.btnAddTable').click(function () {
         $('.input-form').addClass('navbar-fixed-top');
         $('.input-form').slideDown(300);
         $('body').animate({paddingTop: '250px'},300);
@@ -62,7 +62,7 @@ var dayTemplate =function(date,total,itemes){
         '</div>' +
         '</div>';
 
-    slideInputForm();
+//    slideInputForm();
     return result;
 }
 //возвращает все данные за день в виде html-элемента

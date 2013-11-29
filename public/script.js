@@ -13,7 +13,7 @@ var initialRender = function (dayArray) {
         showDayPerDay(dataPerDay);
     }
     dateListTemplate(7);
-}
+};
 //рисует начальный экран
 
 var showDayPerDay = function (data) {
@@ -27,7 +27,9 @@ var showDayPerDay = function (data) {
     var total=calculateTotal(data);
     var dayHTML=dayTemplate(date,total,itemes);
     $('#dayList').append(dayHTML);
-}
+
+    slideInputForm();
+};
 //добавляет данные за день в html-файл
 
 var getData = function (){
@@ -249,23 +251,34 @@ var deleteItem = function () {
 }
 var model={};
 
-
-$(document).ready (function (){
-   var allData=getData();
-   model=sortData(allData);
+var onUpdated = function (allData) {
+//    var allData=getData();
+    model=sortData(allData);
 
     //todo массив дней равен сортировке о индексу? Не очевидные названия
-   var dayArray=sortedDateIndex(model);
+    var dayArray=sortedDateIndex(model);
 
     // todo кстати, наверное на стороне браузера нам вообще не нужно хранить модель как список покупок.
     // Нам важен только список, сгрупированный по дням. Если я ничего не забыл.
 
-   initialRender(dayArray);
-   dateSelect();
+    initialRender(dayArray);
+    dateSelect();
     hideInputForm();
 
     // Стоит объеденить все создания слушателей событий в одну функцию
-   addNewData();
-   deleteItem();
-   console.log(dayArray);
+    addNewData();
+    deleteItem();
+    console.log(dayArray);
+};
+
+var update = function () {
+    $.getJSON('/purchases', function (data) {
+        onUpdated(data);
+    });
+};
+
+$(document).ready (function (){
+    update();
 });
+
+
