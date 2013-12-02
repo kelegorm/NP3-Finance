@@ -198,10 +198,12 @@ var addNewData = function (){
 //добавляет по нажатию на кнопку новые данные и очищает формы ввода
 
 var dateSelect = function (){
-    $('li').click(function(){
+    $('.date-list li').click(function(){
         $('ul.date-list li').removeClass('selected');
         $(this).addClass('selected');
         var newDate=$('li.selected').data('id');
+//        var newDate='30/12/2013';
+        console.log ('new Date:'+newDate);
         var viewNewDay;
         var newItem={
             name: '',
@@ -296,8 +298,9 @@ var update = function () {
         for (var i = 0; i < data.length; i++) {
             var item = data[i];
             var date = new Date(item.date);
-            item.date = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+            item.date = ((date.getDate()<10)?'0':'') + date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
         }
+        console.log("This is a result from server: ", data);
         onUpdated(data);
     });
 };
@@ -308,7 +311,7 @@ var update = function () {
 var postNewPurchase = function (data) {
     var dateParts = data.date.split('/');
 
-    var date = new Date(dateParts[2], dateParts[1], dateParts[0]);
+    var date = new Date(dateParts[2], dateParts[1]-1, dateParts[0]);
 
     var purchase = {
         name: data.name,
