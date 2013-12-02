@@ -2,8 +2,8 @@ var crypto = require('crypto');
 var mongoose = require('mongoose');
 
 var AccountSchema = new mongoose.Schema({
-    _id:       { type: String },
-    password:  { type: String },
+    email:       { type: String, unique:true, required:true },
+    password:  { type: String, required:true },
     name:      { type: String }
 });
 var Account = mongoose.model('Account', AccountSchema);
@@ -12,7 +12,7 @@ var Account = mongoose.model('Account', AccountSchema);
 module.exports.login = function(email, password, callback) {
     var shaSum = crypto.createHash('sha256');
     shaSum.update(password);
-    Account.findOne({_id:email,password:shaSum.digest('hex')},function(err,doc){
+    Account.findOne({email:email,password:shaSum.digest('hex')},function(err,doc){
         callback(doc);
     });
 };
@@ -24,12 +24,12 @@ module.exports.register = function(email, password, callback) {
 
     console.log('Registering ' + email);
     var user = new Account({
-        _id: email,
+        email: email,
         password: shaSum.digest('hex')
     });
     user.save(callback);
     console.log('Save command was sent');
-}
+};
 
 
 //module.exports.changePassword = function(email, newpassword) {
@@ -72,10 +72,10 @@ module.exports.register = function(email, password, callback) {
 
 
 module.exports.findById = function(email, callback) {
-    Account.findOne({_id:email}, function(err,doc) {
+    Account.findOne({email:email}, function(err,doc) {
         callback(doc);
     });
-}
+};
 
 //var registerCallback = function(err) {
 //    if (err) {

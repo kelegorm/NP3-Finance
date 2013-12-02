@@ -96,23 +96,34 @@ var sortData = function (allData) {
          }
     }
     return result;
-}
+};
 //формирует из всех данных объект с ключами в виде дат
 
+/**
+ * возвращает массив дат для вывода выбиралки дат (начиная с сегодня, параметр - количество)
+ * @param quantityLI - количество дней, которые нужно вернуть
+ * @returns {Array} список дней, начиная с сегодня и по убывающей
+ */
 var daysList =function(quantityLI){
+    //TODO добавить изменение месяца
+
     var today = new Date();
     var dayToday=today.getDate();
     var dayArray=[];
     for (var i=0; i<quantityLI; i++) {
-        dayArray[i]=dayToday-i;
-        if (dayArray[i]<10) {
-            dayArray[i]='0'+dayArray[i];
-        }
-    }
+//        dayArray[i]=dayToday-i;
+//        if (dayArray[i]<10) {
+//            dayArray[i]='0'+dayArray[i];
+//        }
+
+        var someDate = new Date(today);
+        someDate.setDate(someDate.getDate() - i);
+        var someDay = someDate.getDate();
+        var dayString = ((someDay<10)?'0':'') + someDay;
+        dayArray.push(dayString);
+    };
     return dayArray;
-}
-//возвращает массив дат для вывода выбиралки дат (начиная с сегодня, параметр - количество)
-//добавить изменение месяца
+};
 
 var addNewItemToModel = function (date,newItem){
     if (model.hasOwnProperty(date)) {
@@ -160,8 +171,8 @@ var getDataForm = function (array) {
 }
 
 var addNewData = function (){
-        $('#input-form').submit(function(event){
-            event.preventDefault();
+    $('#input-form').submit(function(event){
+        event.preventDefault();
         var date=$('li.selected').data('id');
         var inputData=$(this).serializeArray();
         var newItem=getDataForm(inputData);
@@ -172,17 +183,18 @@ var addNewData = function (){
         for (var i=0; i<newItem.tags.length;i++) {
             newItem.tags[i]= $.trim(newItem.tags[i]);
         }
-//очищаем введенные теги от пробелов в начале и в конце
+        //очищаем введенные теги от пробелов в начале и в конце
 
         $(this)[0].reset();
-//очищаем формы ввода
+        //очищаем формы ввода
 
         model[date].push(newItem);
+        postNewPurchase(newItem);
         addNewItem(date,newItem);
 
-    $('ul.date-list li').removeClass('selected');
-})
-}
+        $('ul.date-list li').removeClass('selected');
+    });
+};
 //добавляет по нажатию на кнопку новые данные и очищает формы ввода
 
 var dateSelect = function (){
@@ -233,11 +245,11 @@ var getItemValues = function (element) {
     result['date']=date;
 
     return result;
-}
+};
 
 var removeItemFromModel = function (date,item) {
 //   model[date]._removeData(item);
-}
+};
 
 var deleteItem = function () {
     $('.icon-remove').click(function () {
@@ -248,9 +260,14 @@ var deleteItem = function () {
 
         console.log (Item);
     })
-}
+};
+
 var model={};
 
+/**
+ * Эта функция обновляет всю страницу
+ * @param allData - это массив покупок
+ */
 var onUpdated = function (allData) {
 //    var allData=getData();
     model=sortData(allData);
@@ -271,9 +288,37 @@ var onUpdated = function (allData) {
     console.log(dayArray);
 };
 
+/**
+ * Эта функция запрашивает с сервера список покупок
+ */
 var update = function () {
     $.getJSON('/purchases', function (data) {
+        for (var i = 0; i < data.length; i++) {
+            var item = data[i];
+            var date = new Date(item.date);
+            item.date = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+        }
         onUpdated(data);
+    });
+};
+/**
+ * Сохраняет покупку на сервере
+ * @param data
+ */
+var postNewPurchase = function (data) {
+    var dateParts = data.date.split('/');
+
+    var date = new Date(dateParts[2], dateParts[1], dateParts[0]);
+
+    var purchase = {
+        name: data.name,
+        price: data.price,
+        tags: data.tags,
+        date: date
+    };
+
+    $.post('/purchase', purchase, function () {
+
     });
 };
 

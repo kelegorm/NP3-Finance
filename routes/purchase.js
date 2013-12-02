@@ -54,15 +54,17 @@ module.exports = function (app) {
 //    });
 
     app.post('/purchase', function(req, res) {
-        var name = req.param('purchase', null);
+        var name = req.param('name', null);
         var price = req.param('price', null);
         var date = req.param('date', null);
         var tags = req.param('tags', null);
+
+        console.log(req.body);
         if ( null === name || name.length < 1 ) {
             res.send(400);
             return;
         }
-        if (price !== null) {
+        if (price == null) {
             res.send(400);
             return;
         }

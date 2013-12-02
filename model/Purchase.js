@@ -10,7 +10,7 @@ var PurchaseSchema = new mongoose.Schema({
 var Purchase = mongoose.model('Purchase', PurchaseSchema);
 
 module.exports.create = function (purchase, callback) {
-    var purchase = new Note(purchase);
+    var purchase = new Purchase(purchase);
     purchase.save(callback);
 };
 

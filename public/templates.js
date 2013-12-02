@@ -64,7 +64,7 @@ var dayTemplate =function(date,total,itemes){
 
 //    slideInputForm();
     return result;
-}
+};
 //возвращает все данные за день в виде html-элемента
 
 var dateListTemplate = function (quantityLI) {
@@ -83,8 +83,8 @@ var dateListTemplate = function (quantityLI) {
         result+='<li data-id='+dayArray[i]+'/'+(monthToday+1)+'/'+yearToday+'><a href="#'+dayArray[i]+'/'+(monthToday+1)+'/'+yearToday+'">'+dateArray[i]+'</a></li>';
 
     }
+
     result+='</ul>';
-//    return result;
     $('.day-choose').prepend(result);
-}
+};
 //формирует html-список дат с помощью daysList
