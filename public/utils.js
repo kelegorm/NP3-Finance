@@ -25,3 +25,9 @@ var getToday =function () {
     return result;
 }
 //возвращает сегодняшнее число в формате дд/мм/гггг
+
+lessTenAddZero = function (number){
+    resultString='';
+    resultString=((number<10)?'0':'')+number;
+    return resultString;
+}

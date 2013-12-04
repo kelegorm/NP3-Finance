@@ -78,12 +78,14 @@ var dateListTemplate = function (quantityLI) {
     var result = '<ul class="date-list">'
     for (var i=0;i<dayArray.length;i++){
         dateArray[i]='';
-        dateArray[i]='<span>'+dayArray[i]+'</span>'+' '+'<small>'+ readableMonth+'</small>';
+        dayToAdd=lessTenAddZero(dayArray[i].day);
+        monthtoAdd=lessTenAddZero(dayArray[i].month+1);
+        dateArray[i]='<span>'+dayToAdd+'</span>'+' '+'<small>'+ monthArray[dayArray[i].month]+'</small>';
+
         if (i===0){dateArray[i]+='<div class="muted pull-right">Today</div>';}
-        result+='<li data-id='+dayArray[i]+'/'+(monthToday+1)+'/'+yearToday+'><a href="#'+dayArray[i]+'/'+(monthToday+1)+'/'+yearToday+'">'+dateArray[i]+'</a></li>';
 
+        result+='<li data-id='+dayToAdd+'/'+monthtoAdd+'/'+dayArray[i].year+'><a href="#'+dayToAdd+'/'+monthtoAdd+'/'+dayArray[i].year+'">'+dateArray[i]+'</a></li>';
     }
-
     result+='</ul>';
     $('.day-choose').prepend(result);
 };

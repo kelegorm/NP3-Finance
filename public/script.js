@@ -13,6 +13,7 @@ var initialRender = function (dayArray) {
         showDayPerDay(dataPerDay);
     }
     dateListTemplate(7);
+    slideInputForm();
 };
 //рисует начальный экран
 
@@ -28,7 +29,6 @@ var showDayPerDay = function (data) {
     var dayHTML=dayTemplate(date,total,itemes);
     $('#dayList').append(dayHTML);
 
-    slideInputForm();
 };
 //добавляет данные за день в html-файл
 
@@ -105,22 +105,17 @@ var sortData = function (allData) {
  * @returns {Array} список дней, начиная с сегодня и по убывающей
  */
 var daysList =function(quantityLI){
-    //TODO добавить изменение месяца
-
     var today = new Date();
     var dayToday=today.getDate();
     var dayArray=[];
     for (var i=0; i<quantityLI; i++) {
-//        dayArray[i]=dayToday-i;
-//        if (dayArray[i]<10) {
-//            dayArray[i]='0'+dayArray[i];
-//        }
-
         var someDate = new Date(today);
         someDate.setDate(someDate.getDate() - i);
         var someDay = someDate.getDate();
-        var dayString = ((someDay<10)?'0':'') + someDay;
-        dayArray.push(dayString);
+        var someMonth=someDate.getMonth();
+        var someYear=someDate.getFullYear();
+        var someDate={day: someDay, month: someMonth, year: someYear};
+        dayArray.push(someDate);
     };
     return dayArray;
 };
@@ -141,7 +136,7 @@ var addNewDay = function (date,item,model) {
     var viewNewDay=dayTemplate(date,item.price,item.name);
     var i=0;
     if (getDateIndex(dateArray[0])==getDateIndex(date)) {
-        $('#dayList').find('[data-id="'+dateArray[1]+'"]').before(viewNewDay);
+        $('#dayList').prepend(viewNewDay);
     } else {
         do {
             dayAfterDayToAdd=dateArray[i];
@@ -202,7 +197,6 @@ var dateSelect = function (){
         $('ul.date-list li').removeClass('selected');
         $(this).addClass('selected');
         var newDate=$('li.selected').data('id');
-//        var newDate='30/12/2013';
         console.log ('new Date:'+newDate);
         var viewNewDay;
         var newItem={
@@ -215,6 +209,7 @@ var dateSelect = function (){
         if (!model.hasOwnProperty(newDate)){
             addNewItemToModel(newDate,newItem);
             addNewDay(newDate,newItem,model)
+            console.log (model);
         }
     })
 };
