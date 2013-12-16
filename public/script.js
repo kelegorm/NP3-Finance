@@ -14,6 +14,8 @@ var initialRender = function (dayArray) {
     }
     dateListTemplate(7);
     slideInputForm();
+    hideInputForm();
+    addNewData();
 };
 //рисует начальный экран
 
@@ -32,40 +34,6 @@ var showDayPerDay = function (data) {
 };
 //добавляет данные за день в html-файл
 
-var getData = function (){
-    function Item (date,name,tags,price) {
-        this.date=date;
-        this.name=name;
-        this.tags=tags;
-        this.price=price;
-    }
-
-    // todo вместо создания кучи перменных можно было сразу писать это в массив, через запятую.
-    // Так проще было бы редактировать
-    var item1=new Item('08/11/2013',"Макароны",['крупы', 'полуфабрикаты'],40);
-    var item2=new Item('08/11/2013',"Яблоки",['фрукты'],25);
-    var item3=new Item('11/11/2013',"Чипсы",['вкусности'],35);
-    var item4=new Item('15/11/2013',"Конфеты",['вкусности'],135);
-    var item5=new Item('14/11/2013',"Мясо",['мясо'],250);
-    var item6=new Item('18/11/2013',"Рыба",['рыба'],400);
-    var item7=new Item('22/11/2013',"Помидоры",['овощи'],70);
-    var item8=new Item('17/11/2013',"Манка",['крупы','полуфабрикаты'],70);
-    var item9=new Item('20/11/2013',"Кешью",['орехи'],70);
-    var item10=new Item('13/11/2013',"Танцы",['хобби','услуги'],1500);
-    var item11=new Item('16/11/2013',"Проезд метро",['транспорт'],70);
-    var item12=new Item('17/11/2013',"Мандарины",['фрукты'],70);
-
-    return [item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12];
-}
-//возвращает данные по покупкам
-
-var getDateIndex = function(date) {
-    var dateNumber = date.split('/');
-    var result=Number(dateNumber[2]+dateNumber[1]+dateNumber[0]);
-    return result;
-}
-//возвращает дату в числовом формате
-
 var sortedDateIndex = function (array) {
     var dayArray=[]
     for (var day in array) {
@@ -80,7 +48,6 @@ var sortedDateIndex = function (array) {
             }
         }
     }
-
     return dayArray;
 }
 //возвращает массив отсортированных дат
@@ -130,7 +97,7 @@ var addNewItemToModel = function (date,newItem){
 }
 //добавляет новый элемент в модель
 
-var addNewDay = function (date,item,model) {
+var viewNewDay = function (date,item,model) {
     var dateArray=sortedDateIndex(model);
     var dayAfterDayToAdd;
     var viewNewDay=dayTemplate(date,item.price,item.name);
@@ -147,7 +114,7 @@ var addNewDay = function (date,item,model) {
 }
 //рисует новый день (данных за который ещё не было)
 
-var addNewItem = function (date,item) {
+var viewNewItem = function (date,item) {
     var itemForAdd=buyTemplate(item);
     var total=calculateTotal(model[date]);
     $('#dayList').find('[data-id="'+date+'"]').children('.table-column').prepend(itemForAdd);
@@ -165,29 +132,34 @@ var getDataForm = function (array) {
     return result;
 }
 
+var getNewItemFromForm = function (formElement) {
+    var date=$('li.selected').data('id');
+    var inputData=$(formElement).serializeArray();
+    var newItem=getDataForm(inputData);
+    newItem['date']=date;
+    newItem.price=Number(newItem.price);
+
+    newItem.tags=newItem.tags.split(',');
+    for (var i=0; i<newItem.tags.length;i++) {
+        newItem.tags[i]= $.trim(newItem.tags[i]);
+    }
+    //очищаем введенные теги от пробелов в начале и в конце
+
+    return newItem;
+}
+
 var addNewData = function (){
     $('#input-form').submit(function(event){
         event.preventDefault();
-        var date=$('li.selected').data('id');
-        var inputData=$(this).serializeArray();
-        var newItem=getDataForm(inputData);
-        newItem['date']=date;
-        newItem.price=Number(newItem.price);
 
-        newItem.tags=newItem.tags.split(',');
-        for (var i=0; i<newItem.tags.length;i++) {
-            newItem.tags[i]= $.trim(newItem.tags[i]);
-        }
-        //очищаем введенные теги от пробелов в начале и в конце
-
+        var newItem=getNewItemFromForm(this);
+        $('ul.date-list li').removeClass('selected');
         $(this)[0].reset();
         //очищаем формы ввода
 
-        model[date].push(newItem);
+        model[newItem.date].push(newItem);
         postNewPurchase(newItem);
-        addNewItem(date,newItem);
-
-        $('ul.date-list li').removeClass('selected');
+        viewNewItem(newItem.date,newItem);
     });
 };
 //добавляет по нажатию на кнопку новые данные и очищает формы ввода
@@ -197,8 +169,6 @@ var dateSelect = function (){
         $('ul.date-list li').removeClass('selected');
         $(this).addClass('selected');
         var newDate=$('li.selected').data('id');
-        console.log ('new Date:'+newDate);
-        var viewNewDay;
         var newItem={
             name: '',
             price: 0,
@@ -208,7 +178,7 @@ var dateSelect = function (){
 
         if (!model.hasOwnProperty(newDate)){
             addNewItemToModel(newDate,newItem);
-            addNewDay(newDate,newItem,model)
+            viewNewDay(newDate,newItem,model)
             console.log (model);
         }
     })
@@ -223,39 +193,63 @@ var hideInputForm = function (){
     })
 };
 
-var getItemValues = function (element) {
-   var result={};
-   var commonParent=$(element).closest('.item');
-   var name=commonParent.children('.itemName').text();
-   var price=commonParent.children('.pull-right').children('.itemPrice').text();
-   var date=commonParent.parent('.table-column').siblings('.date-column').text();
+//var getItemToDelete = function (element) {
+//   var result={};
+//   var commonParent=$(element).closest('.item');
+//   var name=commonParent.children('.itemName').text();
+//   var price=commonParent.children('.pull-right').children('.itemPrice').text();
+//   var date=commonParent.parent('.table-column').closest('.date-column').text();
+//
+//   var tags=[];
+//   var tagsQuantity=commonParent.children('.pull-right').children('.itemPrice').siblings('.label').size();
+//    for (i=0;i<tagsQuantity;i++) {
+//       tags[i]=commonParent.children('.pull-right').find('.label:nth-of-type('+(i+1)+')').text();
+//   }
+//
+//    result['name']=name;
+//    result['price']=Number(price);
+//    result['tags']=tags;
+//    result['date']=date;
+//
+//    return result;
+//};
 
-   var tags=[];
-   var tagsQuantity=commonParent.children('.pull-right').children('.itemPrice').siblings('.label').size();
-    for (i=0;i<tagsQuantity;i++) {
-       tags[i]=commonParent.children('.pull-right').find('.label:nth-of-type('+(i+1)+')').text();
-   }
+var getIDItemToDelete = function (element) {
+   var IDItemToDelete=$(element).data('purchase-id');
+   return IDItemToDelete;
+}
 
-    result['name']=name;
-    result['price']=Number(price);
-    result['tags']=tags;
-    result['date']=date;
-
-    return result;
+var removeItemFromModel = function (element) {
+    var itemID=getIDItemToDelete(element);
+    for (var day in model) {
+        for (var i=0; i<model[day].length; i++) {
+            if (model[day][i]._id==itemID) {
+               model[day].splice (i,1);
+            }
+            if (model[day].length<1){
+                delete model[day];
+                break;
+            }
+        }
+    }
 };
 
-var removeItemFromModel = function (date,item) {
-//   model[date]._removeData(item);
-};
+var removeViewItem = function(iconRemove) {
+    var itemToRemove = $(iconRemove).closest('.pull-right').parent('div');
+    var dayToRemove = itemToRemove.closest('.day-item');
+    if (dayToRemove.children('.item').size()>1){
+    itemToRemove.remove();
+    } else {
+    dayToRemove.remove();
+    }
+}
 
 var deleteItem = function () {
     $('.icon-remove').click(function () {
-        var Item =getItemValues(this);
-        removeItemFromModel(Item.date,Item);
-        var itemToRemove = $(this).closest('.pull-right').parent('div');
-        itemToRemove.remove();
+        removeItemFromModel(this);
+        removeViewItem(this);
 
-        console.log (Item);
+        console.log (model);
     })
 };
 
@@ -266,7 +260,6 @@ var model={};
  * @param allData - это массив покупок
  */
 var onUpdated = function (allData) {
-//    var allData=getData();
     model=sortData(allData);
 
     //todo массив дней равен сортировке о индексу? Не очевидные названия
@@ -277,10 +270,8 @@ var onUpdated = function (allData) {
 
     initialRender(dayArray);
     dateSelect();
-    hideInputForm();
 
     // Стоит объеденить все создания слушателей событий в одну функцию
-    addNewData();
     deleteItem();
     console.log(dayArray);
 };

@@ -19,7 +19,7 @@ var buyTemplate = function (item){
                 '<div class="pull-right">' +
                     tagsTemplate(item)+
                      '<span class="itemPrice">'+item.price+'</span>'  +
-                     '<span class="icon-remove"></span>'+
+                     '<span class="icon-remove" data-purchase-id='+item._id+'></span>'+
                 '</div>' +
            '</div>';
 }
@@ -62,7 +62,6 @@ var dayTemplate =function(date,total,itemes){
         '</div>' +
         '</div>';
 
-//    slideInputForm();
     return result;
 };
 //возвращает все данные за день в виде html-элемента

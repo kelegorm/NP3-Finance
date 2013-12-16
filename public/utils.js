@@ -26,8 +26,16 @@ var getToday =function () {
 }
 //возвращает сегодняшнее число в формате дд/мм/гггг
 
-lessTenAddZero = function (number){
+var lessTenAddZero = function (number){
     resultString='';
     resultString=((number<10)?'0':'')+number;
     return resultString;
 }
+
+var getDateIndex = function(date) {
+    var dateNumber = date.split('/');
+    var result=Number(dateNumber[2]+dateNumber[1]+dateNumber[0]);
+    return result;
+}
+//возвращает дату в числовом формате
+
