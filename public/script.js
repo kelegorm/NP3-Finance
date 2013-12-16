@@ -242,7 +242,7 @@ var removeViewItem = function(iconRemove) {
     } else {
     dayToRemove.remove();
     }
-}
+};
 
 var deleteItem = function () {
     $('.icon-remove').click(function () {
@@ -250,7 +250,9 @@ var deleteItem = function () {
         removeViewItem(this);
 
         console.log (model);
-    })
+
+        postDeletePurchase(getIDItemToDelete(this));
+    });
 };
 
 var model={};
@@ -308,6 +310,13 @@ var postNewPurchase = function (data) {
 
     $.post('/purchase', purchase, function () {
 
+    });
+};
+
+var postDeletePurchase = function (idItemToDelete) {
+    $.ajax({
+        url: '/purchase/' + idItemToDelete,
+        type:'DELETE'
     });
 };
 
