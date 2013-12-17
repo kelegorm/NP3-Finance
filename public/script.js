@@ -16,6 +16,8 @@ var initialRender = function (dayArray) {
     slideInputForm();
     hideInputForm();
     addNewData();
+    deleteItem();
+    viewInputInExistDay();
 };
 //рисует начальный экран
 
@@ -119,7 +121,9 @@ var viewNewItem = function (date,item) {
     var total=calculateTotal(model[date]);
     $('#dayList').find('[data-id="'+date+'"]').children('.table-column').prepend(itemForAdd);
     $('#dayList').find('[data-id="'+date+'"]').children('.total-column').html(total);
-
+    deleteItem();
+    slideInputForm();
+    viewInputInExistDay();
 }
 //рисует новую покупку (день уже был в модели)
 
@@ -153,7 +157,6 @@ var addNewData = function (){
         event.preventDefault();
 
         var newItem=getNewItemFromForm(this);
-        $('ul.date-list li').removeClass('selected');
         $(this)[0].reset();
         //очищаем формы ввода
 
@@ -163,6 +166,13 @@ var addNewData = function (){
     });
 };
 //добавляет по нажатию на кнопку новые данные и очищает формы ввода
+
+var viewInputInExistDay = function () {
+    $('.addInExistDay').click(function() {
+        $(this).closest('.table-column').append(inputExistDayTemplate());
+        $(this).remove();
+    })
+}
 
 var dateSelect = function (){
     $('.date-list li').click(function(){
@@ -237,7 +247,8 @@ var removeItemFromModel = function (element) {
 var removeViewItem = function(iconRemove) {
     var itemToRemove = $(iconRemove).closest('.pull-right').parent('div');
     var dayToRemove = itemToRemove.closest('.day-item');
-    if (dayToRemove.children('.item').size()>1){
+    var quantityItems = dayToRemove.children('.table-column').children('.item').size();
+    if (quantityItems>1){
     itemToRemove.remove();
     } else {
     dayToRemove.remove();

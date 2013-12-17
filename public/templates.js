@@ -44,6 +44,19 @@ var slideInputForm = function () {
 };
 //рисует форму ввода по нажатию на кнопку Add
 
+var inputExistDayTemplate = function () {
+    var result;
+    result='<div class="input-exist-day span7">' +
+        '<form id="exist-day">' +
+        '<input class="span4" name="name" size="16" type="text" placeholder="Good">'+
+        '<input class="span2" name="tags" size="16" type="text" placeholder="Tags">' +
+        '<input class="span1" name="name" size="16" type="text" placeholder="Price">'  +
+        '</form>' +
+        '</div>';
+
+    return result;
+}
+
 var dayTemplate =function(date,total,itemes){
     var result;
     result='<div class="day-item row" data-id="'+date+'" id="'+date+'">'+
@@ -53,6 +66,7 @@ var dayTemplate =function(date,total,itemes){
         '</div>' +
         '<div class="table-column span7">'+
         itemes+
+        '<div class="addInExistDay text-info"> Add one more purchase</div>'+
         '</div>' +
         '<div class="total-column span2 bold">'+
         total+
