@@ -46,11 +46,12 @@ var slideInputForm = function () {
 
 var inputExistDayTemplate = function () {
     var result;
-    result='<div class="input-exist-day span7">' +
-        '<form id="exist-day">' +
-        '<input class="span4" name="name" size="16" type="text" placeholder="Good">'+
+    result='<div class="input-exist-day">' +
+        '<form class="input-new-item" id="exist-day">' +
+        '<input class="span4" name="name" size="16" type="text" placeholder="Good" required="true">'+
         '<input class="span2" name="tags" size="16" type="text" placeholder="Tags">' +
-        '<input class="span1" name="name" size="16" type="text" placeholder="Price">'  +
+        '<input class="span1" name="price" size="16" type="text" placeholder="Price" required="true">'  +
+        '<input class="addNewItemExistDay" type="submit">' +
         '</form>' +
         '</div>';
 
@@ -66,7 +67,7 @@ var dayTemplate =function(date,total,itemes){
         '</div>' +
         '<div class="table-column span7">'+
         itemes+
-        '<div class="addInExistDay text-info"> Add one more purchase</div>'+
+        '<small><a class="addInExistDay text-info" href="#"> Add one more purchase</a></small>'+
         '</div>' +
         '<div class="total-column span2 bold">'+
         total+

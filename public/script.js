@@ -117,13 +117,15 @@ var viewNewDay = function (date,item,model) {
 //рисует новый день (данных за который ещё не было)
 
 var viewNewItem = function (date,item) {
+//    console.log ('viewNewItem::date', item);
     var itemForAdd=buyTemplate(item);
+//    console.log ('viewNewItem::itemForAdd', itemForAdd);
+
     var total=calculateTotal(model[date]);
     $('#dayList').find('[data-id="'+date+'"]').children('.table-column').prepend(itemForAdd);
     $('#dayList').find('[data-id="'+date+'"]').children('.total-column').html(total);
     deleteItem();
     slideInputForm();
-    viewInputInExistDay();
 }
 //рисует новую покупку (день уже был в модели)
 
@@ -137,7 +139,16 @@ var getDataForm = function (array) {
 }
 
 var getNewItemFromForm = function (formElement) {
-    var date=$('li.selected').data('id');
+
+    var thisId=$(formElement).attr("id");
+    var date;
+
+    if (thisId==='new-day') {
+       date=$('li.selected').data('id');
+    }  else {
+       date=$(formElement).closest('.day-item').data('id');
+    }
+
     var inputData=$(formElement).serializeArray();
     var newItem=getDataForm(inputData);
     newItem['date']=date;
@@ -149,16 +160,20 @@ var getNewItemFromForm = function (formElement) {
     }
     //очищаем введенные теги от пробелов в начале и в конце
 
+    console.log(newItem);
+
     return newItem;
 }
 
 var addNewData = function (){
-    $('#input-form').submit(function(event){
+    $('.input-new-item').submit(function(event){
         event.preventDefault();
+
+        console.log ('I work!');
 
         var newItem=getNewItemFromForm(this);
         $(this)[0].reset();
-        //очищаем формы ввода
+//        очищаем формы ввода
 
         model[newItem.date].push(newItem);
         postNewPurchase(newItem);
@@ -171,6 +186,8 @@ var viewInputInExistDay = function () {
     $('.addInExistDay').click(function() {
         $(this).closest('.table-column').append(inputExistDayTemplate());
         $(this).remove();
+
+        addNewData();
     })
 }
 
@@ -200,6 +217,9 @@ var hideInputForm = function (){
 //        $('.input-form').removeClass('navbar-fixed-top');
         $('.input-form').slideUp(300);
         $('body').stop(true, true).animate({paddingTop: '60px'},300);
+
+        $('ul.date-list li').removeClass('selected');
+        //отменяем выбор даты, если закрываем панель ввода
     })
 };
 
@@ -259,8 +279,6 @@ var deleteItem = function () {
     $('.icon-remove').click(function () {
         removeItemFromModel(this);
         removeViewItem(this);
-
-        console.log (model);
 
         postDeletePurchase(getIDItemToDelete(this));
     });
