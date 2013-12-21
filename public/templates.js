@@ -44,10 +44,10 @@ var slideInputForm = function () {
 };
 //рисует форму ввода по нажатию на кнопку Add
 
-var inputExistDayTemplate = function () {
+var inputExistDayTemplate = function (date) {
     var result;
     result='<div class="input-exist-day">' +
-        '<form class="input-new-item" id="exist-day">' +
+        '<form class="input-new-item" id="exist-day" data-date="'+date+'">' +
         '<input class="span4" name="name" size="16" type="text" placeholder="Good" required="true">'+
         '<input class="span2" name="tags" size="16" type="text" placeholder="Tags">' +
         '<input class="span1" name="price" size="16" type="text" placeholder="Price" required="true">'  +

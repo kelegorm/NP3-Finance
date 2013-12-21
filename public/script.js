@@ -15,7 +15,8 @@ var initialRender = function (dayArray) {
     dateListTemplate(7);
     slideInputForm();
     hideInputForm();
-    addNewData();
+    addNewData('.input-new-item');
+    //todo я вообще сомневаюсь, нужен ли здесь addNewData
     deleteItem();
     viewInputInExistDay();
 };
@@ -113,6 +114,8 @@ var viewNewDay = function (date,item,model) {
         while (getDateIndex(dateArray[i])>getDateIndex(date));
         $('#dayList').find('[data-id="'+dayAfterDayToAdd+'"]').after(viewNewDay);
     }
+
+    viewInputInExistDay();
 }
 //рисует новый день (данных за который ещё не было)
 
@@ -165,8 +168,8 @@ var getNewItemFromForm = function (formElement) {
     return newItem;
 }
 
-var addNewData = function (){
-    $('.input-new-item').submit(function(event){
+var addNewData = function (form){
+    $(form).submit(function(event){
         event.preventDefault();
 
         console.log ('I work!');
@@ -182,12 +185,25 @@ var addNewData = function (){
 };
 //добавляет по нажатию на кнопку новые данные и очищает формы ввода
 
+var changeElement = function (elementToHide, elementToView) {
+    $(elementToHide).css('display','none');
+    $(elementToView).css('display','inline');
+}
+//изменяет свойство display элементов. Один становится скрыт, а второй отображается
+
 var viewInputInExistDay = function () {
     $('.addInExistDay').click(function() {
-        $(this).closest('.table-column').append(inputExistDayTemplate());
-        $(this).remove();
+        var date=$(this).closest('.day-item').data('id');
 
-        addNewData();
+        changeElement('.input-exist-day','.addInExistDay');
+        //скрывает формы, открытые в других днях и отображает на их месте ссылку для открытия формы
+
+        $(this).closest('.table-column').append(inputExistDayTemplate(date));
+
+        addNewData('[data-date="'+date+'"]');
+
+        $(this).css('display','none');
+        //скрывает ссылку, по которой была открыта форма
     })
 }
 
