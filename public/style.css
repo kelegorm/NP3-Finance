@@ -79,11 +79,11 @@ li:hover{
     background-color: rgba(0, 136, 204, 0.22) ;
 }
 
-.icon-remove {
+.iconToDo {
     opacity: 0.11;
 }
 
-.icon-remove:hover{
+.iconToDo:hover{
     opacity: 1;
     color: #002a80;
 }

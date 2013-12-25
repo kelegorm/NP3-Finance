@@ -18,6 +18,7 @@ var initialRender = function (dayArray) {
     addNewData('.input-new-item');
     //todo я вообще сомневаюсь, нужен ли здесь addNewData
     deleteItem();
+    editItem();
     viewInputInExistDay();
 };
 //рисует начальный экран
@@ -120,15 +121,13 @@ var viewNewDay = function (date,item,model) {
 //рисует новый день (данных за который ещё не было)
 
 var viewNewItem = function (date,item) {
-//    console.log ('viewNewItem::date', item);
     var itemForAdd=buyTemplate(item);
-//    console.log ('viewNewItem::itemForAdd', itemForAdd);
 
     var total=calculateTotal(model[date]);
     $('#dayList').find('[data-id="'+date+'"]').children('.table-column').prepend(itemForAdd);
     $('#dayList').find('[data-id="'+date+'"]').children('.total-column').html(total);
     deleteItem();
-    slideInputForm();
+    editItem();
 }
 //рисует новую покупку (день уже был в модели)
 
@@ -260,13 +259,13 @@ var hideInputForm = function (){
 //    return result;
 //};
 
-var getIDItemToDelete = function (element) {
-   var IDItemToDelete=$(element).data('purchase-id');
-   return IDItemToDelete;
+var getIDItem = function (element) {
+   var IDItem=$(element).data('purchase-id');
+   return IDItem;
 }
 
 var removeItemFromModel = function (element) {
-    var itemID=getIDItemToDelete(element);
+    var itemID=getIDItem(element);
     for (var day in model) {
         for (var i=0; i<model[day].length; i++) {
             if (model[day][i]._id==itemID) {
@@ -289,16 +288,64 @@ var removeViewItem = function(iconRemove) {
     } else {
     dayToRemove.remove();
     }
+
+    var date=$(iconRemove).data('id');
+    var newTotal=calculateTotal(model[date]);
+    dayToRemove.find('.total-column').html(newTotal);
 };
+//удаляет покупку и обновляет сумму или удаляет весь день (если покупка всего одна)
 
 var deleteItem = function () {
     $('.icon-remove').click(function () {
         removeItemFromModel(this);
         removeViewItem(this);
 
-        postDeletePurchase(getIDItemToDelete(this));
+        postDeletePurchase(getIDItem(this));
     });
 };
+
+var getItemById = function (itemID) {
+    var item;
+    for (var day in model) {
+        for (var i=0; i<model[day].length; i++) {
+            if (model[day][i]._id==itemID) {
+                item=model[day][i];
+            }
+        }
+    }
+    return item;
+}
+
+var editItem = function () {
+    $('.icon-pencil').click(function () {
+        var itemID=getIDItem(this);
+        var item=getItemById(itemID);
+        var itemToEdit=$(this).closest('.item');
+        var editForm=editInputTemplate(item);
+
+        itemToEdit.after(editForm);
+        itemToEdit.css ('display','none');
+
+        $('.edit-item-form').submit(function(event){
+            event.preventDefault();
+
+            var newItem=getNewItemFromForm(this);
+            item.name=newItem.name;
+            item.price=newItem.price;
+            item.tags=newItem.tags;
+
+            var newTotal=calculateTotal(model[item.date]);
+
+            itemToEdit.css ('display','inline');
+            itemToEdit.html(buyTemplate(item));
+            itemToEdit.parents('.day-item').children('.total-column').html(newTotal);
+
+            console.log (model);
+            this.remove();
+        });
+
+    })
+}
 
 var model={};
 

@@ -19,7 +19,8 @@ var buyTemplate = function (item){
                 '<div class="pull-right">' +
                     tagsTemplate(item)+
                      '<span class="itemPrice">'+item.price+'</span>'  +
-                     '<span class="icon-remove" data-purchase-id='+item._id+'></span>'+
+                     '<span class="iconToDo icon-remove" data-id='+item.date+' data-purchase-id='+item._id+'></span>'+
+                     '<span class="iconToDo icon-pencil" data-id='+item.date+' data-purchase-id='+item._id+'></span>'+
                 '</div>' +
            '</div>';
 }
@@ -72,9 +73,6 @@ var dayTemplate =function(date,total,itemes){
         '<div class="total-column span2 bold">'+
         total+
         '</div>' +
-        '<div class="button-column span1">'+
-        '<button class="btn btnAddTable">Add</button>'+
-        '</div>' +
         '</div>';
 
     return result;
@@ -104,3 +102,17 @@ var dateListTemplate = function (quantityLI) {
     $('.day-choose').prepend(result);
 };
 //формирует html-список дат с помощью daysList
+
+var editInputTemplate = function (item) {
+    var result;
+    result='<div class="edit-item">' +
+        '<form class="edit-item-form" id="'+item._id+'" data-date="'+item.date+'">' +
+        '<input class="span4" name="name" size="16" type="text" value="'+item.name+'">'+
+        '<input class="span2" name="tags" size="16" type="text" value="'+item.tags+'">' +
+        '<input class="span1" name="price" size="16" type="text" value="'+item.price+'">'  +
+        '<input class="addNewItemExistDay" type="submit">' +
+        '</form>' +
+        '</div>';
+
+    return result;
+}
